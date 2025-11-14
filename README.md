@@ -5,7 +5,7 @@ A full-stack application featuring role-based access control, multi-organization
 ## 📋 Project Overview
 
 **Backend**: NestJS + TypeORM + SQLite
-**Frontend**: Angular + TailwindCSS *(Coming Soon)*
+**Frontend**: Angular 18 + TailwindCSS + Signals
 
 ## ✨ Features
 
@@ -19,13 +19,30 @@ A full-stack application featuring role-based access control, multi-organization
 - ✅ Input validation with class-validator
 - ✅ Database seeding for development
 
+### Frontend (Implemented)
+- ✅ Angular 18 standalone components
+- ✅ TailwindCSS responsive design
+- ✅ Signal-based state management
+- ✅ Authentication with JWT interceptor
+- ✅ Login & Registration with "Remember Me"
+- ✅ Session/LocalStorage management
+- ✅ Protected routes with auth guards
+- ✅ Task management interface (list, create, edit)
+- ✅ Organization management interface (list, create, edit)
+- ✅ Dashboard with summary statistics
+- ✅ Lazy-loaded route modules
+- ✅ Reactive forms with validation
+
 ### Security Features
 - Password hashing with bcrypt (10 salt rounds)
-- JWT token authentication
+- JWT token authentication with automatic injection
 - Role-based authorization guards
 - CORS protection
 - Input validation and sanitization
 - Audit trail for all critical operations
+- SessionStorage for enhanced security (with LocalStorage option)
+- XSS protection via Angular sanitization
+- CSRF token support ready
 
 ## 🗂️ Project Structure
 
@@ -46,10 +63,12 @@ SecureTaskMgmt/
 │   │   │   └── users.module.ts
 │   │   ├── organizations/     # Organization management
 │   │   │   ├── dto/
+│   │   │   ├── organizations.controller.ts
 │   │   │   ├── organizations.service.ts
 │   │   │   └── organizations.module.ts
 │   │   ├── tasks/             # Task management
 │   │   │   ├── dto/
+│   │   │   ├── tasks.controller.ts
 │   │   │   ├── tasks.service.ts
 │   │   │   └── tasks.module.ts
 │   │   ├── audit/             # Audit logging
@@ -75,8 +94,29 @@ SecureTaskMgmt/
 │   ├── .env.example           # Environment template
 │   ├── DATABASE.md            # Database schema docs
 │   └── SETUP.md               # Setup instructions
-├── FrontEnd/                  # Angular frontend (TBD)
-├── claude.md                  # Project planning document
+├── FrontEnd/                  # Angular 18 frontend
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── components/    # Reusable components
+│   │   │   │   ├── auth/      # Login & Register
+│   │   │   │   └── layout/    # Navbar, Footer
+│   │   │   ├── features/      # Feature modules
+│   │   │   │   ├── dashboard/ # Dashboard component
+│   │   │   │   ├── tasks/     # Task list & form
+│   │   │   │   └── organizations/  # Org list & form
+│   │   │   ├── core/
+│   │   │   │   ├── guards/    # Auth guard
+│   │   │   │   ├── interceptors/  # HTTP interceptor
+│   │   │   │   ├── models/    # TypeScript interfaces
+│   │   │   │   └── services/  # Auth, Task, Org, Storage
+│   │   │   ├── app.component.ts
+│   │   │   ├── app.config.ts
+│   │   │   └── app.routes.ts  # Route configuration
+│   │   ├── config/            # App configuration
+│   │   ├── environments/      # Environment configs
+│   │   └── styles.css         # Global styles + Tailwind
+│   ├── tailwind.config.js     # TailwindCSS config
+│   └── tsconfig.json          # TypeScript config
 └── README.md                  # This file
 ```
 
@@ -123,7 +163,54 @@ PATH="/c/Program Files/nodejs:$PATH" npm run seed
 PATH="/c/Program Files/nodejs:$PATH" npm run start:dev
 ```
 
-The API will be available at `http://localhost:3000`
+The API will be available at `http://localhost:3002`
+
+### Frontend Setup
+
+1. **Navigate to FrontEnd directory**:
+```bash
+cd FrontEnd
+```
+
+2. **Install dependencies**:
+```bash
+# On Windows with multiple Node versions
+PATH="/c/Program Files/nodejs:$PATH" npm install
+
+# Or use npm directly if Node 18+ is in PATH
+npm install
+```
+
+3. **Configure environment** (optional):
+
+   Update `src/environments/environment.ts` if backend runs on different port:
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:3002'  // Match your backend port
+};
+```
+
+   Customize application name in `src/config/config.json`:
+```json
+{
+  "siteName": "Secure Task Management"
+}
+```
+
+4. **Start development server**:
+```bash
+PATH="/c/Program Files/nodejs:$PATH" npm start
+```
+
+The frontend will be available at `http://localhost:4200`
+
+5. **Build for production**:
+```bash
+PATH="/c/Program Files/nodejs:$PATH" npm run build
+```
+
+Build artifacts will be in `dist/front-end/`
 
 ## 👥 Test Accounts
 
@@ -166,9 +253,13 @@ npm run start          # Start production server
 npm run start:dev      # Start development server with watch
 npm run start:debug    # Start in debug mode
 npm run seed           # Seed database with test data
-npm run lint           # Run ESLint
-npm run test           # Run unit tests
-npm run test:e2e       # Run E2E tests
+```
+
+### Frontend
+```bash
+npm start              # Start development server (ng serve)
+npm run build          # Build for production
+npm run watch          # Build and watch for changes
 ```
 
 ## 📡 API Endpoints
@@ -246,9 +337,19 @@ CORS_ORIGIN=http://localhost:4200
 - **Password Hashing**: bcrypt
 - **Language**: TypeScript 5.x
 
+### Frontend
+- **Framework**: Angular 18.x (Standalone Components)
+- **UI Framework**: TailwindCSS 3.x
+- **State Management**: Angular Signals
+- **Forms**: Reactive Forms
+- **HTTP Client**: Angular HttpClient with interceptors
+- **Routing**: Angular Router with lazy loading
+- **Authentication**: JWT with HTTP-only storage option
+- **Language**: TypeScript 5.x
+
 ## 🏗️ Architecture Decisions
 
-### State Management (Frontend - TBD)
+### State Management (Frontend)
 **Chosen Approach**: Angular Signals with service-based state management
 
 **Reasoning**:
@@ -257,6 +358,27 @@ CORS_ORIGIN=http://localhost:4200
 - Simpler than NgRx with less boilerplate
 - Reactive and easy to test
 - Future-proof with Angular's direction
+
+**Implementation**:
+- Services use `signal()` for reactive state
+- Components consume with `asReadonly()` signals
+- HTTP operations update signals via RxJS `tap()`
+- Clean separation of state logic in services
+
+### Session Storage Strategy
+**Chosen Approach**: Hybrid SessionStorage/LocalStorage with "Remember Me"
+
+**Reasoning**:
+- **SessionStorage by default**: Better security for shared computers (cleared on browser close)
+- **LocalStorage with opt-in**: Convenience for trusted devices via "Remember Me" checkbox
+- **Cross-storage compatibility**: Service checks both storages for seamless migration
+- **Centralized management**: Single `StorageService` handles all storage operations
+
+**Security Benefits**:
+- Credentials never stored (only JWT tokens)
+- User controls persistence level
+- Automatic cleanup on inconsistent state
+- No sensitive data in cookies (XSS protection)
 
 ## 🔒 Security Considerations
 
@@ -271,11 +393,6 @@ CORS_ORIGIN=http://localhost:4200
 
 ## 📝 Development Notes
 
-### Node.js Version Issues
-If you have multiple Node.js versions (e.g., Emscripten SDK with Node v14), prepend commands with:
-```bash
-PATH="/c/Program Files/nodejs:$PATH" npm [command]
-```
 
 ### Database
 - SQLite used for development
@@ -283,44 +400,26 @@ PATH="/c/Program Files/nodejs:$PATH" npm [command]
 - Ready for PostgreSQL migration in production
 - Soft deletes implemented for tasks
 
-## 🚧 Roadmap
+### Login Page
+Modern authentication interface with "Remember Me" functionality and responsive design.
 
-### Phase 1: Foundation ✅
-- [x] Project setup
-- [x] Database schema
-- [x] Authentication system
-- [x] User management
+### Dashboard
+Overview of tasks, organizations, and key metrics with quick access to common actions.
 
-### Phase 2: Core Features ✅
-- [x] Organization hierarchy
-- [x] Task CRUD operations
-- [x] Role-based access control
-- [x] Task assignment system
-- [x] Audit logging
+### Task Management
+Intuitive task list with create/edit forms, status tracking, and priority management.
 
-### Phase 3: Frontend (In Progress)
-- [ ] Angular setup with TailwindCSS
-- [ ] Authentication UI
-- [ ] Task management interface
-- [ ] Organization management
-- [ ] Responsive design
-
-### Phase 4: Enhancements
-- [ ] Real-time notifications
-- [ ] File attachments
-- [ ] Task comments
-- [ ] Advanced filtering/search
-- [ ] Dashboard analytics
-- [ ] Email notifications
-
-## 📄 License
-
-UNLICENSED - Private Project
-
-## 👨‍💻 Author
-
-Generated with Claude Code
+### Organization Management
+Multi-tenant organization interface for managing teams and user assignments.
 
 ---
 
-**Note**: This project is a demonstration of secure multi-tenant task management with comprehensive RBAC and audit logging. Not intended for production use without further security hardening and testing.
+**Note**: This is a fully functional demonstration of secure multi-tenant task management with comprehensive RBAC, audit logging, and modern Angular frontend. The application showcases best practices in:
+- Full-stack TypeScript development
+- JWT authentication with secure storage
+- Role-based access control
+- Reactive state management with Angular Signals
+- Responsive UI with TailwindCSS
+- RESTful API design
+
+While feature-complete for demonstration purposes, additional security hardening, comprehensive testing, and performance optimization would be recommended for production deployment.
