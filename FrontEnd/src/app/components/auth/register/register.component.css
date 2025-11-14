@@ -1,0 +1,7 @@
+/* Component-specific styles */
+.box{
+    border: 1px solid gray;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 5px 4px 9px 0px gray;
+}

@@ -1,0 +1,87 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+    <p class="mt-2 text-sm text-gray-600">
+      Welcome back, {{ authService.userFullName() }}!
+    </p>
+  </div>
+
+  @if (loading()) {
+    <app-loading></app-loading>
+  } @else {
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500 truncate">To Do</dt>
+          <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ todoCount }}</dd>
+        </div>
+      </div>
+
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500 truncate">In Progress</dt>
+          <dd class="mt-1 text-3xl font-semibold text-blue-600">{{ inProgressCount }}</dd>
+        </div>
+      </div>
+
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-sm font-medium text-gray-500 truncate">Completed</dt>
+          <dd class="mt-1 text-3xl font-semibold text-green-600">{{ doneCount }}</dd>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-medium text-gray-900">Recent Tasks</h2>
+        <a routerLink="/tasks" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+          View all →
+        </a>
+      </div>
+
+      @if (tasks().length === 0) {
+        <div class="text-center py-12 bg-white rounded-lg shadow">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No tasks yet</h3>
+          <p class="mt-1 text-sm text-gray-500">Get started by creating a new task.</p>
+          <div class="mt-6">
+            <a
+              routerLink="/tasks/new"
+              class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            >
+              Create Task
+            </a>
+          </div>
+        </div>
+      } @else {
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+          <ul class="divide-y divide-gray-200">
+            @for (task of tasks().slice(0, 5); track task.id) {
+              <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                      {{ task.title }}
+                    </p>
+                    <p class="mt-1 text-sm text-gray-500">
+                      {{ task.status | titlecase }} • {{ task.priority | uppercase }}
+                    </p>
+                  </div>
+                  <a
+                    [routerLink]="['/tasks', task.id]"
+                    class="ml-4 text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                  >
+                    View
+                  </a>
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,99 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">My Tasks</h1>
+    <a
+      routerLink="/tasks/new"
+      class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    >
+      <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+      </svg>
+      New Task
+    </a>
+  </div>
+
+  @if (error()) {
+    <div class="rounded-md bg-red-50 p-4 mb-4">
+      <div class="flex">
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            {{ error() }}
+          </h3>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <app-loading></app-loading>
+  } @else if (tasks().length === 0) {
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No tasks</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by creating a new task.</p>
+      <div class="mt-6">
+        <a
+          routerLink="/tasks/new"
+          class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
+          New Task
+        </a>
+      </div>
+    </div>
+  } @else {
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+      <ul class="divide-y divide-gray-200">
+        @for (task of tasks(); track task.id) {
+          <li>
+            <div class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+              <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center space-x-3">
+                    <h3 class="text-lg font-medium text-gray-900 truncate">
+                      {{ task.title }}
+                    </h3>
+                    <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStatusClass(task.status)">
+                      {{ getStatusLabel(task.status) }}
+                    </span>
+                    <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getPriorityClass(task.priority)">
+                      {{ task.priority | uppercase }}
+                    </span>
+                  </div>
+                  @if (task.description) {
+                    <p class="mt-2 text-sm text-gray-600">
+                      {{ task.description }}
+                    </p>
+                  }
+                  @if (task.dueDate) {
+                    <p class="mt-2 text-xs text-gray-500">
+                      Due: {{ task.dueDate | date:'short' }}
+                    </p>
+                  }
+                </div>
+                <div class="flex items-center space-x-2">
+                  <a
+                    [routerLink]="['/tasks', task.id]"
+                    class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    View
+                  </a>
+                  <button
+                    (click)="deleteTask(task.id)"
+                    class="inline-flex items-center px-3 py-1 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>
